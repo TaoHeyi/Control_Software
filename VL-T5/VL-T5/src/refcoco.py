@@ -18,7 +18,7 @@ from pprint import pprint
 
 from param import parse_args
 
-from refcoco_data import get_loader
+from refcoco_data import get_loader, get_button_loader
 from utils import LossMeter
 from dist_utils import reduce_dict
 import wandb
@@ -401,27 +401,50 @@ def main_worker(gpu, args):
         dist.init_process_group(backend='nccl')
 
     print(f'Building train loader at GPU {gpu}')
-    train_loader = get_loader(
+    # train_loader = get_loader(
+    #     args,
+    #     split=args.train, mode='train', batch_size=args.batch_size,
+    #     distributed=args.distributed, gpu=args.gpu,
+    #     workers=args.num_workers,
+    #     topk=args.train_topk,
+    # )
+    train_loader = get_button_loader(
         args,
         split=args.train, mode='train', batch_size=args.batch_size,
         distributed=args.distributed, gpu=args.gpu,
         workers=args.num_workers,
         topk=args.train_topk,
     )
+
     if args.valid_batch_size is not None:
         valid_batch_size = args.valid_batch_size
     else:
         valid_batch_size = args.batch_size
     print(f'Building val loader at GPU {gpu}')
-    val_loader = get_loader(
+    # val_loader = get_loader(
+    #     args,
+    #     split=args.valid, mode='val', batch_size=valid_batch_size,
+    #     distributed=args.distributed, gpu=args.gpu,
+    #     workers=4,
+    #     topk=args.valid_topk,
+    # )
+    val_loader = get_button_loader(
         args,
         split=args.valid, mode='val', batch_size=valid_batch_size,
         distributed=args.distributed, gpu=args.gpu,
         workers=4,
         topk=args.valid_topk,
     )
+    
     print(f'Building test loader at GPU {gpu}')
-    test_loader = get_loader(
+    # test_loader = get_loader(
+    #     args,
+    #     split=args.test, mode='val', batch_size=valid_batch_size,
+    #     distributed=args.distributed, gpu=args.gpu,
+    #     workers=4,
+    #     topk=args.valid_topk,
+    # )
+    test_loader = get_button_loader(
         args,
         split=args.test, mode='val', batch_size=valid_batch_size,
         distributed=args.distributed, gpu=args.gpu,
@@ -437,6 +460,8 @@ if __name__ == "__main__":
     args = parse_args()
     ngpus_per_node = torch.cuda.device_count()
     args.world_size = ngpus_per_node
+    args.vis_pointer = False
+    
     if args.local_rank in [0, -1]:
         print(args)
 

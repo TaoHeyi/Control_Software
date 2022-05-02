@@ -136,3 +136,10 @@ def get_iou(anchors, gt_boxes):
 def xywh_to_xyxy(boxes):
     """Convert [x y w h] box format to [x1 y1 x2 y2] format."""
     return np.hstack((boxes[:, 0:2], boxes[:, 0:2] + boxes[:, 2:4] - 1))
+
+def norm_to_reg(boxes, img_wight, img_height):
+    boxes[:, 0] *= img_wight
+    boxes[:, 1] *= img_height
+    boxes[:, 2] *= img_wight
+    boxes[:, 3] *= img_height
+    return boxes

@@ -437,6 +437,8 @@ if __name__ == "__main__":
     args = parse_args()
     ngpus_per_node = torch.cuda.device_count()
     args.world_size = ngpus_per_node
+    args.vis_pointer = False
+    
     if args.local_rank in [0, -1]:
         print(args)
 

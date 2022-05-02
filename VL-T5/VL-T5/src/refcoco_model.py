@@ -88,22 +88,28 @@ class VLT5RefCOCO(VLT5):
             decoder_input_ids=decoder_input_ids,
             return_dict=True
         )
+        # print(output)
+        print("At first the output logits shape is", output['logits'])
 
         logits = output['logits'].detach()
+        print(self.config.vocab_size)
         logits = logits.view(B, self.config.vocab_size)
+        print("The shape after viewing is", logits.shape)
 
         pred = logits.argmax(dim=1).view(B)
         pred = pred.cpu().numpy()
 
         correct = np.zeros([B])
         for i in range(B):
+            # print("Here is pred[i]", pred[i])
+            # print("Here is batch['all_target_ids'][i]", batch['all_target_ids'][i])
             correct[i] = pred[i] in batch['all_target_ids'][i]
 
         result = {}
         result['pred'] = pred
         result['correct'] = correct
 
-        return result
+        return result, output
 
 from modeling_bart import VLBart
 from collections import defaultdict

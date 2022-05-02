@@ -212,10 +212,7 @@ class JointEncoder(T5Stack):
 
         if vis_attention_mask is None:
             vis_attention_mask = attention_mask.new_ones(B, V_L)
-        
-#         print("Here is attention mask")
-#         print(attention_mask)
-#         print(V_L)
+
         attention_mask = torch.cat([attention_mask, vis_attention_mask], dim=1)
 
         # ourselves in which case we just need to make it broadcastable to all heads.
